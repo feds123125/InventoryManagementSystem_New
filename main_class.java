@@ -84,9 +84,11 @@ public class main_class {
         // if num == 3, exit the function
 
         int num = safeInt("Enter 1 to add a perishable product, 2 to add a non-perishable product, or 3 to return to the main menu: ");
+        System.out.println();
 
         while (num != 1 && num != 2 && num != 3){
             num = safeInt("Invalid option. Please enter either 1, 2 or 3: ");
+            System.out.println();
         }
 
         if (num == 3){
@@ -99,10 +101,11 @@ public class main_class {
         // if num == 2, add product
 
         try {
-            System.out.println();
             int prod_id = safeInt("Enter the Product ID: ");
 
-            if (InventoryManager.productExists(prod_id)){
+            if (prod_id < 0){
+                    throw new InvalidProductIdException("Product ID cannot be negative");
+            } else if (InventoryManager.productExists(prod_id)){
                 throw new InvalidProductIdException("A product with this ID already exists.");
             } else {
                 System.out.print("Enter the Product Name: ");
@@ -110,7 +113,16 @@ public class main_class {
 
                 double prod_price = safeDouble("Enter the Product Price ($): ");
 
+                if (prod_price < 0){
+                    System.out.println("Price cannot be negative.");
+                    return;
+                }
+
                 int prod_quantity = safeInt("Enter the Quantity: ");
+
+                if (prod_quantity < 0){
+                    System.out.println();
+                }
 
                 if (num == 1){
                     System.out.print("Enter the Expiry Date (dd-mm-yyyy): ");
@@ -165,9 +177,13 @@ public class main_class {
         // get product ID. If product does not exist throw exception and exit function
 
         int prod_Id = safeInt("Enter the Product ID: ");
+        System.out.println();
 
         try{
-            if(!InventoryManager.productExists(prod_Id)){
+            if(prod_Id < 0){
+                throw new InvalidProductIdException("Product ID cannot be negative");
+            }
+            else if(!InventoryManager.productExists(prod_Id)){
                 throw new InvalidProductIdException("Product does not exist");
             }
         } catch (InvalidProductIdException e){
@@ -203,12 +219,23 @@ public class main_class {
             } 
             else if (num == 2){
                 double prod_price = safeDouble("Enter a new product price: ");
+
+                if (prod_price < 0){
+                    System.out.println("Price cannot be negative");
+                    return;
+                }
+
                 System.out.println(InventoryManager.updateProductPrice(prod_Id, prod_price));
                 break;
             }
             else if (num == 3){
-                System.out.print("Enter a new quantity: ");
                 int prod_quantity = safeInt("Enter a new quantity: ");
+
+                if (prod_quantity < 0){
+                    System.out.println("Price cannot be negative");
+                    return;
+                }
+
                 System.out.println(InventoryManager.updateProductQuantity(prod_Id, prod_quantity));
                 break;
             }
@@ -304,6 +331,7 @@ public class main_class {
             try{
                 return Integer.parseInt(input_var.nextLine());
             } catch (NumberFormatException e){
+                System.out.println();
                 System.out.print("Input is not an Integer. Try again: ");
             }
         }
